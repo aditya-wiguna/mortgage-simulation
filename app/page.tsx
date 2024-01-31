@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select"
 
 const simulatorFormSchema = z.object({
-  income: z
+  price: z
     .number({
       required_error: "Masukan nominal penghasilan anda.",
     }),
@@ -46,7 +46,6 @@ const simulatorFormSchema = z.object({
   interest_rate: z.number({
     required_error: "Masukan suku bunga kredit anda.",
   }),
-  occupation: z.enum(["employee", "entrepreneur"]),
   other_loan: z.number().optional(),
   down_payment: z.number({
     required_error: "Masukan uang muka anda.",
@@ -82,15 +81,15 @@ export default function Home() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="income"
+                name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Pendapatan / Gaji</FormLabel>
+                    <FormLabel>Harga Rumah</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input type="number" placeholder="100.000.000" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Masukan rata - rata pendapatan anda selama 3 bulan terakhir.
+                      Masukan harga rumah yang ingin anda cari / beli.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -99,21 +98,64 @@ export default function Home() {
 
               <FormField
                 control={form.control}
-                name="occupation"
+                name="down_payment"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Pekerjaan</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pekerjaan Saat Ini" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="employee">Karyawan</SelectItem>
-                        <SelectItem value="entrepreneur">Pengusaha</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Uang Muka</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="100.000.000" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Masukan uang muka yang sudah anda siapkan, rekomendasi 30% dari harga rumah.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="other_loan"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cicilan Lainnya</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="0" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Jika anda memiliki cicilan lainnya, masukan nilai angsurannya.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tenor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Jangka Waktu / Tenor</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="0" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Jangka waktu kredit, sesuai dengan peraturan yang ada saat ini maksimal 25 tahun.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="interest_rate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Suku Bunga Kredit</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="0" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
