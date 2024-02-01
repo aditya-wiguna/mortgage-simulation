@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { cn } from "@/lib/utils"
 import { useFieldArray, useForm } from "react-hook-form"
-import { Toast } from "@/components/ui/toast"
+import { toast } from "sonner"
 import {
   Form,
   FormControl,
@@ -34,7 +34,7 @@ const simulatorFormSchema = z.object({
       required_error: "Masukan nominal penghasilan anda.",
     }),
   tenor: z
-    .number({
+    .string({
       required_error: "Masukan jangka waktu kredit anda.",
     })
     .min(1, "Jangka waktu kredit minimal 1 tahun.")
@@ -60,6 +60,27 @@ export default function Home() {
   })
 
   function onSubmit(data: SimulationFormValues) {
+    console.log(data)
+  }
+
+  function validateDownPayment(){
+    //get price
+    const price = parseInt(form.getValues('price') || '0')
+    //get down payment
+    const downPayment = parseInt(form.getValues('down_payment') || '0')
+
+    if (price == 0){
+      toast("Masukan Harga Rumah", {
+        description: 'Masukan harga rumah terlebih dahulu',
+      })
+    }
+
+    //validate
+    if (downPayment < (price * 0.1)){
+      toast("Perhatikan Uang Muka", {
+        description: 'Uang muka minimal 10% dari harga rumah',
+      })
+    }
   }
 
   return (
