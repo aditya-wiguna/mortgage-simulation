@@ -16,25 +16,21 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { 
-  Input 
+import {
+  Input
 } from "@/components/ui/input"
 
-import { 
-  Button 
-} from "@/components/ui/button"
+import {
+  InputMoney
+} from "@/components/ui/input-money"
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Button
+} from "@/components/ui/button"
 
 const simulatorFormSchema = z.object({
   price: z
-    .number({
+    .string({
       required_error: "Masukan nominal penghasilan anda.",
     }),
   tenor: z
@@ -43,11 +39,11 @@ const simulatorFormSchema = z.object({
     })
     .min(1, "Jangka waktu kredit minimal 1 tahun.")
     .max(25, "Jangka waktu kredit maksimal 25 tahun."),
-  interest_rate: z.number({
+  interest_rate: z.string({
     required_error: "Masukan suku bunga kredit anda.",
   }),
-  other_loan: z.number().optional(),
-  down_payment: z.number({
+  other_loan: z.string().optional(),
+  down_payment: z.string({
     required_error: "Masukan uang muka anda.",
   }),
 })
@@ -86,7 +82,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Harga Rumah</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="100.000.000" {...field} />
+                      <InputMoney placeholder="100.000.000" {...field} />
                     </FormControl>
                     <FormDescription>
                       Masukan harga rumah yang ingin anda cari / beli.
@@ -103,7 +99,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Uang Muka</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="100.000.000" {...field} />
+                      <InputMoney placeholder="100.000.000" {...field} />
                     </FormControl>
                     <FormDescription>
                       Masukan uang muka yang sudah anda siapkan, rekomendasi 30% dari harga rumah.
@@ -120,7 +116,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Cicilan Lainnya</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0" {...field} />
+                      <InputMoney placeholder="0" {...field} />
                     </FormControl>
                     <FormDescription>
                       Jika anda memiliki cicilan lainnya, masukan nilai angsurannya.
@@ -160,10 +156,61 @@ export default function Home() {
                   </FormItem>
                 )}
               />
-              
+
               <Button type="submit">Hitung Simulasi Kredit</Button>
             </form>
           </Form>
+        </div>
+        <div className="flex-1 lg:max-w-2xl">
+          <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="space-y-0.5 my-5">
+                <p className="text-muted-foreground">Angsuran</p>
+                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+              </div>
+            </div>
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="space-y-0.5 my-5">
+                <p className="text-muted-foreground">Uang Muka</p>
+                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="space-y-0.5 my-5">
+                <p className="text-muted-foreground">Pokok Hutang</p>
+                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+              </div>
+            </div>
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="space-y-0.5 my-5">
+                <p className="text-muted-foreground">Minimum Pendapatan</p>
+                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="space-y-0.5 my-5">
+                <p className="text-muted-foreground">(Est) Biaya Provisi</p>
+                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+              </div>
+            </div>
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="space-y-0.5 my-5">
+                <p className="text-muted-foreground">(Est) Biaya Administrasi</p>
+                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-0.5 my-5">
+            <p className="text-muted-foreground">(Est) Total Biaya</p>
+            <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+          </div>
         </div>
       </div>
     </div>
