@@ -5,6 +5,10 @@ import { cn } from "@/lib/utils"
 export interface InputProps
 extends React.InputHTMLAttributes<HTMLInputElement> {}
 
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  onInput?: (event: React.FormEvent<HTMLInputElement>) => void;
+}
+
 const formatMoney = (value: string) => {
   return value
     .replace(/\D/g, "")
@@ -12,7 +16,7 @@ const formatMoney = (value: string) => {
 }
 
 const InputMoney = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, onInput, ...props }, ref) => {
     return (
       <input type={type}
         className={
@@ -20,7 +24,12 @@ const InputMoney = React.forwardRef<HTMLInputElement, InputProps>(
         }
         ref={ref}
         onInput={(e) => {
-          e.currentTarget.value = formatMoney(e.currentTarget.value)
+          // Call the formatMoney function
+          e.currentTarget.value = formatMoney(e.currentTarget.value);
+          // Call the onInput prop if it's provided
+          if (onInput) {
+            onInput(e);
+          }
         }}
         {...props} />
     )
