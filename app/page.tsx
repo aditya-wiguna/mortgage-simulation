@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { cn } from "@/lib/utils"
+import { cn, formatRupiah } from "@/lib/utils"
 import { useFieldArray, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import {
@@ -27,6 +27,8 @@ import {
 import {
   Button
 } from "@/components/ui/button"
+
+import { useState } from "react"
 
 const simulatorFormSchema = z.object({
   price: z
@@ -53,6 +55,14 @@ type SimulationFormValues = z.infer<typeof simulatorFormSchema>
 const defaultValues: Partial<SimulationFormValues> = {}
 
 export default function Home() {
+  const [installment, setInstallment] = useState(0)
+  const [downPayment, setDownPayment] = useState(0)
+  const [loanAmount, setLoanAmount] = useState(0)
+  const [minimumIncome, setMinimumIncome] = useState(0)
+  const [provisionCost, setProvisionCost] = useState(0)
+  const [adminCost, setAdminCost] = useState(0)
+  const [totalCost, setTotalCost] = useState(0)
+
   const form = useForm<SimulationFormValues>({
     resolver: zodResolver(simulatorFormSchema),
     defaultValues,
@@ -60,7 +70,29 @@ export default function Home() {
   })
 
   function onSubmit(data: SimulationFormValues) {
-    console.log(data)
+    const price = parseInt((data.price || '0').replaceAll('.', ''))
+    const downPayment = parseInt((data.down_payment || '0').replaceAll('.', ''))
+    const tenor = parseInt(data.tenor || '0')
+    const interestRate = parseInt(data.interest_rate || '0')
+    const otherLoan = parseInt(data.other_loan || '0')
+
+    const monthlyInterestRate = interestRate / 12
+
+    const loanAmount = price - downPayment
+
+    const installment = loanAmount * (monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -tenor)))
+    const minimumIncome = installment * 3
+    const provisionCost = loanAmount * 0.01
+    const adminCost = loanAmount * 0.01
+    const totalCost = loanAmount + provisionCost + adminCost
+
+    setDownPayment(downPayment)
+    setLoanAmount(loanAmount)
+    setInstallment(installment)
+    setMinimumIncome(minimumIncome)
+    setProvisionCost(provisionCost)
+    setAdminCost(adminCost)
+    setTotalCost(totalCost)
   }
 
   function validateDownPayment(){
@@ -128,7 +160,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Uang Muka</FormLabel>
                     <FormControl>
-                      <InputMoney onInput={validateDownPayment} placeholder="100.000.000" {...field} />
+                      <InputMoney onKeyUp={validateDownPayment} placeholder="100.000.000" {...field} />
                     </FormControl>
                     <FormDescription>
                       Masukan uang muka yang sudah anda siapkan, rekomendasi 30% dari harga rumah.
@@ -145,7 +177,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Cicilan Lainnya</FormLabel>
                     <FormControl>
-                      <InputMoney placeholder="0" {...field} />
+                      <InputMoney defaultValue={0} placeholder="0" {...field} />
                     </FormControl>
                     <FormDescription>
                       Jika anda memiliki cicilan lainnya, masukan nilai angsurannya.
@@ -195,13 +227,13 @@ export default function Home() {
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
                 <p className="text-muted-foreground">Angsuran</p>
-                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+                <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(installment)}</h4>
               </div>
             </div>
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
                 <p className="text-muted-foreground">Uang Muka</p>
-                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+                <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(downPayment)}</h4>
               </div>
             </div>
           </div>
@@ -210,13 +242,13 @@ export default function Home() {
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
                 <p className="text-muted-foreground">Pokok Hutang</p>
-                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+                <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(loanAmount)}</h4>
               </div>
             </div>
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
                 <p className="text-muted-foreground">Minimum Pendapatan</p>
-                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+                <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(minimumIncome)}</h4>
               </div>
             </div>
           </div>
@@ -224,21 +256,21 @@ export default function Home() {
           <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
-                <p className="text-muted-foreground">(Est) Biaya Provisi</p>
-                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+                <p className="text-muted-foreground">(Est 1%) Biaya Provisi</p>
+                <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(provisionCost)}</h4>
               </div>
             </div>
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
-                <p className="text-muted-foreground">(Est) Biaya Administrasi</p>
-                <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+                <p className="text-muted-foreground">(Est 1%) Biaya Administrasi</p>
+                <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(adminCost)}</h4>
               </div>
             </div>
           </div>
 
           <div className="space-y-0.5 my-5">
             <p className="text-muted-foreground">(Est) Total Biaya</p>
-            <h4 className="text-2xl font-bold tracking-tight">Rp 2.555.000</h4>
+            <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(totalCost)}</h4>
           </div>
         </div>
       </div>
