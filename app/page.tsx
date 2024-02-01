@@ -65,13 +65,17 @@ export default function Home() {
 
   function validateDownPayment(){
     //get price
-    const price = parseInt(form.getValues('price') || '0')
+    const price = parseInt((form.getValues('price') || '0').replaceAll('.', ''))
     //get down payment
-    const downPayment = parseInt(form.getValues('down_payment') || '0')
+    const downPayment = parseInt((form.getValues('down_payment') || '0').replaceAll('.', ''))
 
     if (price == 0){
       toast("Masukan Harga Rumah", {
         description: 'Masukan harga rumah terlebih dahulu',
+        action: {
+          label: "Tutup",
+          onClick: () => console.log("Tutup"),
+        }
       })
     }
 
@@ -79,6 +83,10 @@ export default function Home() {
     if (downPayment < (price * 0.1)){
       toast("Perhatikan Uang Muka", {
         description: 'Uang muka minimal 10% dari harga rumah',
+        action: {
+          label: "Tutup",
+          onClick: () => console.log("Tutup"),
+        }
       })
     }
   }
@@ -120,7 +128,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Uang Muka</FormLabel>
                     <FormControl>
-                      <InputMoney placeholder="100.000.000" {...field} />
+                      <InputMoney onInput={validateDownPayment} placeholder="100.000.000" {...field} />
                     </FormControl>
                     <FormDescription>
                       Masukan uang muka yang sudah anda siapkan, rekomendasi 30% dari harga rumah.
