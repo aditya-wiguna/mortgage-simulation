@@ -10,6 +10,11 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const formatMoney = (value: string) => {
+  // check conditional if 0 first remove 0 on the first character
+  if (value.charAt(0) === "0") {
+    value = value.slice(1)
+  }
+
   return value
     .replace(/\D/g, "")
     .replace(/\B(?=(\d{3})+(?!\d))/g, ".")

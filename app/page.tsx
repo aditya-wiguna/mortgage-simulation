@@ -72,19 +72,28 @@ export default function Home() {
   function onSubmit(data: SimulationFormValues) {
     const price = parseInt((data.price || '0').replaceAll('.', ''))
     const downPayment = parseInt((data.down_payment || '0').replaceAll('.', ''))
-    const tenor = parseInt(data.tenor || '0')
-    const interestRate = parseInt(data.interest_rate || '0')
+    const minimumDownPayment = price * 0.1
+    const tenor = parseInt(data.tenor || '0') * 12
+    const interestRate = parseFloat(data.interest_rate || '0')
     const otherLoan = parseInt(data.other_loan || '0')
 
-    const monthlyInterestRate = interestRate / 12
+    //validate
+    if (downPayment < minimumDownPayment){
+      toast("Perhatikan Uang Muka", {
+        description: `Uang muka minimal 10% dari harga rumah (${formatRupiah(minimumDownPayment)})`,
+      })
+      return
+    }
+
+    const monthlyInterestRate = (interestRate / 12) / 100
 
     const loanAmount = price - downPayment
 
     const installment = loanAmount * (monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -tenor)))
-    const minimumIncome = installment * 3
+    const minimumIncome = (installment * 3) + otherLoan
     const provisionCost = loanAmount * 0.01
     const adminCost = loanAmount * 0.01
-    const totalCost = loanAmount + provisionCost + adminCost
+    const totalCost = downPayment + provisionCost + adminCost
 
     setDownPayment(downPayment)
     setLoanAmount(loanAmount)
@@ -93,34 +102,6 @@ export default function Home() {
     setProvisionCost(provisionCost)
     setAdminCost(adminCost)
     setTotalCost(totalCost)
-  }
-
-  function validateDownPayment(){
-    //get price
-    const price = parseInt((form.getValues('price') || '0').replaceAll('.', ''))
-    //get down payment
-    const downPayment = parseInt((form.getValues('down_payment') || '0').replaceAll('.', ''))
-
-    if (price == 0){
-      toast("Masukan Harga Rumah", {
-        description: 'Masukan harga rumah terlebih dahulu',
-        action: {
-          label: "Tutup",
-          onClick: () => console.log("Tutup"),
-        }
-      })
-    }
-
-    //validate
-    if (downPayment < (price * 0.1)){
-      toast("Perhatikan Uang Muka", {
-        description: 'Uang muka minimal 10% dari harga rumah',
-        action: {
-          label: "Tutup",
-          onClick: () => console.log("Tutup"),
-        }
-      })
-    }
   }
 
   return (
@@ -160,7 +141,7 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Uang Muka</FormLabel>
                     <FormControl>
-                      <InputMoney onKeyUp={validateDownPayment} placeholder="100.000.000" {...field} />
+                      <InputMoney placeholder="100.000.000" {...field} />
                     </FormControl>
                     <FormDescription>
                       Masukan uang muka yang sudah anda siapkan, rekomendasi 30% dari harga rumah.
@@ -192,7 +173,7 @@ export default function Home() {
                 name="tenor"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Jangka Waktu / Tenor</FormLabel>
+                    <FormLabel>Jangka Waktu / Tenor (Tahun)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="0" {...field} />
                     </FormControl>
