@@ -92,7 +92,7 @@ export default function Home() {
     const installment = loanAmount * (monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -tenor)))
     const minimumIncome = (installment * 3) + otherLoan
     const provisionCost = loanAmount * 0.01
-    const adminCost = loanAmount * 0.01
+    const adminCost = 500000 // based on majority bank in Indonesia
     const totalCost = downPayment + provisionCost + adminCost
 
     setDownPayment(downPayment)
@@ -243,7 +243,7 @@ export default function Home() {
             </div>
             <div className="flex-1 lg:max-w-2xl">
               <div className="space-y-0.5 my-5">
-                <p className="text-muted-foreground">(Est 1%) Biaya Administrasi</p>
+                <p className="text-muted-foreground">Biaya Administrasi </p>
                 <h4 className="text-2xl font-bold tracking-tight">{formatRupiah(adminCost)}</h4>
               </div>
             </div>
