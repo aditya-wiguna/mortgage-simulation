@@ -9,8 +9,6 @@ This project using NextJS includes the following packages/apps:
 
 - `web`: Frontend service using nextjs
 - `ui`: React component for ui library using `shadcn/ui` shared for `web` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 ### Built With
 
